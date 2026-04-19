@@ -16,7 +16,7 @@ The application's layout and user flow were developed based on the following wir
 | ![#495E57](https://placehold.co/15x15/495E57/495E57.png) | Primary Green | `#495E57` |
 | ![#F4CE14](https://placehold.co/15x15/F4CE14/F4CE14.png) | Primary Yellow | `#F4CE14` |
 
-## Features
+## 💾 Features
 
 * **Onboarding Screen:** A Welcome flow that prompts users to enter their personal details upon their first launch.
 * **Stack Navigation:** Implementation of a navigation tabs that allows users to navigate through the app.
