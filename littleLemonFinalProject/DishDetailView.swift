@@ -7,7 +7,6 @@ struct DishDetail: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
                 
-                // MARK: - Dish Image
                 AsyncImage(url: URL(string: dish.image ?? "")) { phase in
                     switch phase {
                     case .success(let image):
@@ -30,7 +29,6 @@ struct DishDetail: View {
                 .background(Color.gray.opacity(0.1))
                 .clipped()
                 
-                // MARK: - Content
                 VStack(alignment: .leading, spacing: 16) {
                     
                     Text(dish.title ?? "")
