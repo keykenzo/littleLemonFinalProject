@@ -75,17 +75,17 @@ struct Onboarding: View {
     
     var pagePrimeiro: some View {
         VStack(spacing: 16) {
-            Text("Bem-vindo ao\nLittle Lemon 🍋")
+            Text("Welcome to\nLittle Lemon 🍋")
                 .font(.largeTitle).bold()
                 .multilineTextAlignment(.center)
 
-            Text("Vamos criar seu perfil. Qual é o seu primeiro nome?")
+            Text("Lets create your profile. Whats is your name?")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
-            TextField("Primeiro nome", text: $firstName)
+            TextField("First name", text: $firstName)
                 .textFieldStyle(.roundedBorder)
                 .padding(.horizontal, 24)
                 .autocorrectionDisabled()
@@ -96,14 +96,14 @@ struct Onboarding: View {
    
     var pageSegundo: some View {
         VStack(spacing: 16) {
-            Text("Quase lá!")
+            Text("Almost There!")
                 .font(.largeTitle).bold()
 
-            Text("Qual é o seu sobrenome?")
+            Text("What is your last name?")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
 
-            TextField("Sobrenome", text: $lastName)
+            TextField("Last Name", text: $lastName)
                 .textFieldStyle(.roundedBorder)
                 .padding(.horizontal, 24)
                 .autocorrectionDisabled()
@@ -114,10 +114,10 @@ struct Onboarding: View {
   
     var pageTerceiro: some View {
         VStack(spacing: 16) {
-            Text("Último passo!")
+            Text("Last step!")
                 .font(.largeTitle).bold()
 
-            Text("Informe seu e-mail para finalizar o cadastro.")
+            Text("Please provide your e-mail so we can finish.")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -139,21 +139,21 @@ struct Onboarding: View {
 
         if currentPage == 0 {
             guard !firstName.trimmingCharacters(in: .whitespaces).isEmpty else {
-                showError(message: "Por favor, informe seu primeiro nome.")
+                showError(message: "Please, provide your first name.")
                 return
             }
             withAnimation { currentPage = 1 }
 
         } else if currentPage == 1 {
             guard !lastName.trimmingCharacters(in: .whitespaces).isEmpty else {
-                showError(message: "Por favor, informe seu sobrenome.")
+                showError(message: "Please, provide your last name.")
                 return
             }
             withAnimation { currentPage = 2 }
 
         } else {
             guard isValidEmail(email) else {
-                showError(message: "Por favor, informe um e-mail válido.")
+                showError(message: "Please, provide your e-mail.")
                 return
             }
             // Salva no UserDefaults e navega para Home

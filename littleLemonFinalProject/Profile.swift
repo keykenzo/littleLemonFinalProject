@@ -19,8 +19,9 @@ struct Profile: View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 24) {
                  
-                Image(systemName: "person.circle.fill")
+                Image("ProfilePicture")
                     .resizable()
+                    .clipShape(Circle())
                     .frame(width: 90, height: 90)
                     .foregroundColor(Color("Primary1"))
                     .padding(.top, 20)
