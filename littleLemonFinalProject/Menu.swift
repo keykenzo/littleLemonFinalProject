@@ -1,47 +1,44 @@
 import SwiftUI
 import CoreData
 
-
 struct Menu: View {
     @Environment(\.managedObjectContext) private var viewContext
-
+    
     @State private var searchText       = ""
     @State private var selectedCategory = ""
     @State private var isLoading        = true
-
+    
     let categories = ["starters", "mains", "desserts", "drinks"]
-
+    
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 0) {
-                
-                heroSection
-
-                
-                menuBreakdown
-
-                Divider()
-
-                
-                if isLoading {
-                    ProgressView("Fetching the menu...")
-                        .padding(40)
-                } else {
-                    MenuItemList(
-                        predicate: buildPredicate(),
-                        sortDescriptors: buildSortDescriptors()
-                    )
-                    .padding(.horizontal)
+        NavigationStack {
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+                    
+                    heroSection
+                    
+                    menuBreakdown
+                    
+                    Divider()
+                    
+                    if isLoading {
+                        ProgressView("Fetching the menu...")
+                            .padding(40)
+                    } else {
+                        MenuItemList(
+                            predicate: buildPredicate(),
+                            sortDescriptors: buildSortDescriptors()
+                        )
+                        .padding(.horizontal)
+                    }
                 }
             }
-        }
-        .task {
-            await fetchMenuIfNeeded()
+            .task {
+                await fetchMenuIfNeeded()
+            }
         }
     }
-
     
-
     var heroSection: some View {
         ZStack {
             Color("Primary1")
@@ -52,19 +49,19 @@ struct Menu: View {
                             .font(.system(size: 32, weight: .bold, design: .serif))
                             .fontWeight(.bold)
                             .foregroundColor(Color("Primary2"))
-
+                        
                         Text("Chicago")
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
-
+                        
                         Text("We are a family owned Mediterranean restaurant, focused on traditional recipes served with a modern twist.")
                             .foregroundColor(.white.opacity(0.9))
                             .font(.subheadline)
                     }
-
+                    
                     Spacer()
-
+                    
                     
                     Image("HeroImage")
                         .resizable()
@@ -72,7 +69,7 @@ struct Menu: View {
                         .frame(width: 120, height: 130)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
-
+                
                 
                 HStack {
                     Image(systemName: "magnifyingglass")
@@ -87,9 +84,9 @@ struct Menu: View {
             .padding(16)
         }
     }
-
     
-
+    
+    
     var menuBreakdown: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("ORDER FOR DELIVERY!")
@@ -98,7 +95,7 @@ struct Menu: View {
                 .padding(.horizontal)
                 .padding(.top, 14)
                 .padding(.bottom, 10)
-
+            
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
                     ForEach(categories, id: \.self) { cat in
@@ -122,13 +119,13 @@ struct Menu: View {
             }
         }
     }
-
     
-
+    
+    
     func buildPredicate() -> NSPredicate {
         let hasSearch   = !searchText.isEmpty
         let hasCategory = !selectedCategory.isEmpty
-
+        
         switch (hasSearch, hasCategory) {
         case (false, false):
             return NSPredicate(value: true)
@@ -143,7 +140,7 @@ struct Menu: View {
             )
         }
     }
-
+    
     func buildSortDescriptors() -> [NSSortDescriptor] {
         [NSSortDescriptor(
             key: "title",
@@ -151,29 +148,29 @@ struct Menu: View {
             selector: #selector(NSString.localizedStandardCompare)
         )]
     }
-
-   
-
+    
+    
+    
     func fetchMenuIfNeeded() async {
         let request: NSFetchRequest<Dish> = Dish.fetchRequest()
         let count = (try? viewContext.count(for: request)) ?? 0
-
+        
         // Só busca na rede se o banco estiver vazio
         if count == 0 {
             await fetchMenuFromNetwork()
         }
-
+        
         isLoading = false
     }
-
+    
     func fetchMenuFromNetwork() async {
         let urlString = "https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/refs/heads/main/menu.json"
         guard let url = URL(string: urlString) else { return }
-
+        
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             let decoded   = try JSONDecoder().decode(MenuList.self, from: data)
-
+            
             await MainActor.run {
                 for item in decoded.menu {
                     let dish      = Dish(context: viewContext)
@@ -195,7 +192,7 @@ struct Menu: View {
 
 struct MenuItemList: View {
     @FetchRequest var dishes: FetchedResults<Dish>
-
+    
     init(predicate: NSPredicate, sortDescriptors: [NSSortDescriptor]) {
         _dishes = FetchRequest(
             sortDescriptors: sortDescriptors,
@@ -203,7 +200,7 @@ struct MenuItemList: View {
             animation: .default
         )
     }
-
+    
     var body: some View {
         LazyVStack(spacing: 0) {
             if dishes.isEmpty {
@@ -212,15 +209,16 @@ struct MenuItemList: View {
                     .padding(40)
             } else {
                 ForEach(dishes, id: \.self) { dish in
-                    DishRow(dish: dish)
+                    NavigationLink(destination: DishDetail(dish: dish)) {
+                        DishRow(dish: dish)
+                    }
+                    .buttonStyle(.plain)
                     Divider()
                 }
             }
         }
     }
 }
-
-
 
 struct MenuList: Decodable {
     let menu: [MenuItemNetwork]
