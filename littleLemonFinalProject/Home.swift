@@ -8,7 +8,7 @@ struct Home: View {
         VStack(spacing: 0) {
             ZStack {
                 Color(.systemBackground)
-                Image("Logo")
+                Image("logo")
                     .resizable()
                     .scaledToFit()
                     .frame(height: 40)
